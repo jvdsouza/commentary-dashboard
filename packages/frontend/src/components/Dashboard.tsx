@@ -4,7 +4,7 @@ import { PlayerInfo } from './PlayerInfo';
 import { PlayerSearch } from './PlayerSearch';
 import { ErrorDisplay } from './ErrorDisplay';
 import { useTournamentData } from '../hooks/useTournamentData';
-import type { Player } from '../types';
+import type { Player } from '@commentary/shared';
 
 export const Dashboard: React.FC = () => {
   // Initialize state from URL parameters
@@ -58,7 +58,7 @@ export const Dashboard: React.FC = () => {
   };
 
   const handleRefresh = async () => {
-    await refreshData();
+    await refreshData(true); // Force cache bust
   };
 
   const toggleAutoRefresh = () => {
@@ -186,8 +186,9 @@ export const Dashboard: React.FC = () => {
               onClick={handleRefresh}
               disabled={loading}
               className="refresh-button"
+              title="Force fresh data fetch (bypasses cache)"
             >
-              Refresh Data
+              🔄 Force Refresh
             </button>
             <button
               onClick={toggleAutoRefresh}

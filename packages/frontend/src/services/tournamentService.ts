@@ -1,5 +1,5 @@
-import { startGgApi } from './startGgApi';
-import type { Tournament, TournamentEvent, Player, ApiError } from '../types';
+import { backendApi } from './backendApi';
+import type { Tournament, TournamentEvent, Player, ApiError } from '@commentary/shared';
 
 export class TournamentService {
   private errorHandlers: ((error: ApiError) => void)[] = [];
@@ -8,7 +8,7 @@ export class TournamentService {
     this.errorHandlers.push(handler);
   }
 
-  private handleError(message: string, source: 'startgg' | 'fgctools' | 'network') {
+  private handleError(message: string, source: 'startgg' | 'network' | 'backend') {
     const error: ApiError = {
       message,
       source,
@@ -20,10 +20,11 @@ export class TournamentService {
   }
 
   async loadTournamentFromUrl(
-    url: string, 
+    url: string,
     eventName?: string,
     onProgress?: (progress: { phase: string; bracket?: string; matches: number; total: number }) => void,
-    onBracketComplete?: (tournament: Tournament, selectedEvent?: TournamentEvent, players?: Player[]) => void
+    onBracketComplete?: (tournament: Tournament, selectedEvent?: TournamentEvent, players?: Player[]) => void,
+    refresh: boolean = false
   ): Promise<{
     tournament: Tournament;
     selectedEvent?: TournamentEvent;
@@ -49,10 +50,10 @@ export class TournamentService {
         
         // Get players from the updated event
         const eventPlayers = targetEvent ? targetEvent.participants : [];
-        
+
         // Call the bracket complete callback with updated data
         onBracketComplete?.(tournament, targetEvent, eventPlayers);
-      });
+      }, refresh);
       
       // Find specific event if eventName is provided, or extract from URL
       let selectedEvent: TournamentEvent | undefined;
@@ -125,23 +126,49 @@ export class TournamentService {
   async parseTournamentUrl(
     url: string,
     onProgress?: (progress: { phase: string; bracket?: string; matches: number; total: number }) => void,
-    onBracketComplete?: (tournament: Tournament, event: TournamentEvent) => void
+    onBracketComplete?: (tournament: Tournament, event: TournamentEvent) => void,
+    refresh: boolean = false
   ): Promise<Tournament> {
     try {
       if (this.isStartGgUrl(url)) {
-        return await startGgApi.getTournamentByUrl(url, onProgress, onBracketComplete);
+        // Call backend BFF which handles caching
+        const response = await backendApi.getTournamentByUrl(url, refresh);
+
+        // Log cache info
+        if (response.cached) {
+          console.log(`[CACHE HIT] Tournament loaded from cache (TTL: ${response.metadata.ttl}s)`);
+        } else {
+          console.log(`[CACHE MISS] Fresh tournament data loaded`);
+        }
+
+        // Call progress and completion callbacks with the data
+        // Note: Backend doesn't support progressive loading callbacks yet,
+        // but we still support the interface for future enhancement
+        if (onProgress) {
+          onProgress({ phase: 'complete', matches: 0, total: 1 });
+        }
+
+        if (onBracketComplete && response.data.events.length > 0) {
+          response.data.events.forEach(event => {
+            onBracketComplete(response.data, event);
+          });
+        }
+
+        return response.data;
       } else {
-        this.handleError('Invalid tournament URL. Only start.gg URLs are supported.', 'startgg');
+        this.handleError('Invalid tournament URL. Only start.gg URLs are supported.', 'backend');
       }
     } catch (error) {
       if (error instanceof Error) {
         // Check for specific error types and provide better feedback
         if (error.message.includes('429') || error.message.includes('Too Many Requests')) {
-          this.handleError('start.gg API rate limit exceeded. Please wait a moment before loading another tournament.', 'startgg');
+          this.handleError('start.gg API rate limit exceeded. The backend is managing this - please wait a moment.', 'backend');
         } else if (error.message.includes('401') || error.message.includes('Authentication')) {
-          this.handleError('Invalid start.gg API token. Please check your VITE_STARTGG_API_TOKEN environment variable.', 'startgg');
+          this.handleError('Backend authentication failed. Please check the backend configuration.', 'backend');
+        } else if (error.message.includes('503') || error.message.includes('unavailable')) {
+          this.handleError('Backend service is currently unavailable. Please ensure the backend server is running.', 'backend');
         } else {
-          this.handleError(`Failed to load tournament: ${error.message}`, 'startgg');
+          this.handleError(`Failed to load tournament: ${error.message}`, 'backend');
         }
       }
       throw error;

@@ -1,6 +1,52 @@
-# Esports Commentary Dashboard
+# Esports Commentary Dashboard - Monorepo
 
-A comprehensive dashboard for esports commentators to track player data, tournament progress, and real-time match information. Built with React and TypeScript, integrating with start.gg and FGC Tools APIs.
+A comprehensive dashboard for esports commentators to track player data, tournament progress, and real-time match information. Built with React and TypeScript frontend, Express backend with smart caching, and integrated with start.gg API.
+
+## 📁 Architecture
+
+This is a **monorepo** using npm workspaces with three packages:
+
+- **`@commentary/frontend`** - React + TypeScript UI (`packages/frontend/`)
+- **`@commentary/backend`** - Express BFF with smart caching (`packages/backend/`)
+- **`@commentary/shared`** - Shared TypeScript types (`packages/shared/`)
+
+## 🚀 Quick Start
+
+### 1. Install All Dependencies
+```bash
+npm install
+```
+
+### 2. Configure Environment Variables
+
+**Backend** - Create `packages/backend/.env`:
+```env
+STARTGG_API_TOKEN=your_token_here
+PORT=3001
+CORS_ORIGIN=http://localhost:5173
+```
+
+**Frontend** - Create `packages/frontend/.env`:
+```env
+VITE_BACKEND_URL=http://localhost:3001
+```
+
+### 3. Run Development Servers
+
+**All services:**
+```bash
+npm run dev
+```
+
+**Or individually:**
+```bash
+npm run dev:backend    # Runs on :3001
+npm run dev:frontend   # Runs on :5173
+```
+
+---
+
+## Original README Content
 
 ## Features
 

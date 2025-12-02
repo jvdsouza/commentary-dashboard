@@ -1,31 +1,26 @@
 {
-  "name": "commentary-dashboard",
+  "name": "commentary-dashboard-monorepo",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "description": "Esports commentary dashboard with BFF backend and smart caching",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "axios": "^1.13.2",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:frontend": "npm run dev -w @commentary/frontend",
+    "dev:backend": "npm run dev -w @commentary/backend",
+    "build": "npm run build --workspaces --if-present",
+    "build:frontend": "npm run build -w @commentary/frontend",
+    "build:backend": "npm run build -w @commentary/backend",
+    "lint": "npm run lint --workspaces --if-present",
+    "install:all": "npm install"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
-    "@types/node": "^24.10.0",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "@vitejs/plugin-react": "^5.1.0",
-    "eslint": "^9.39.1",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.24",
-    "globals": "^16.5.0",
-    "typescript": "~5.9.3",
-    "typescript-eslint": "^8.46.3",
-    "vite": "^7.2.2"
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   }
 }

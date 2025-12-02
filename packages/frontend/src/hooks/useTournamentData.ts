@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { Tournament, TournamentEvent, Player, ApiError } from '../types';
+import type { Tournament, TournamentEvent, Player, ApiError } from '@commentary/shared';
 import { tournamentService } from '../services/tournamentService';
 
 interface TournamentData {
@@ -93,17 +93,17 @@ export const useTournamentData = () => {
     }
   }, []);
 
-  const refreshData = useCallback(async () => {
+  const refreshData = useCallback(async (bustCache: boolean = false) => {
     if (!data.tournament) return;
 
     try {
       // Re-fetch current tournament data
       const tournamentUrl = `https://www.start.gg/tournament/${data.tournament.slug}`;
       const eventName = data.selectedEvent?.name;
-      
+
       const result = await tournamentService.loadTournamentFromUrl(
-        tournamentUrl, 
-        eventName, 
+        tournamentUrl,
+        eventName,
         // Progress callback
         (progress) => {
           setData(prev => ({ ...prev, loadingProgress: progress }));
@@ -112,7 +112,7 @@ export const useTournamentData = () => {
         (tournament, selectedEvent, players) => {
           if (tournament && selectedEvent && players) {
             const categorized = tournamentService.categorizePlayersByStatus(players);
-            
+
             setData(prev => ({
               ...prev,
               tournament,
@@ -123,7 +123,8 @@ export const useTournamentData = () => {
               improving: categorized.improving,
             }));
           }
-        }
+        },
+        bustCache // Force cache bypass if requested
       );
       
       const categorized = tournamentService.categorizePlayersByStatus(result.players);
