@@ -4,7 +4,7 @@ A comprehensive dashboard for esports commentators to track player data, tournam
 
 ## 📁 Architecture
 
-This is a **monorepo** using npm workspaces with three packages:
+This is a **monorepo** using pnpm workspaces with three packages:
 
 - **`@commentary/frontend`** - React + TypeScript UI (`packages/frontend/`)
 - **`@commentary/backend`** - Express BFF with smart caching (`packages/backend/`)
@@ -12,12 +12,21 @@ This is a **monorepo** using npm workspaces with three packages:
 
 ## 🚀 Quick Start
 
-### 1. Install All Dependencies
+### 1. Install pnpm (if not already installed)
 ```bash
-npm install
+npm install -g pnpm
+# or
+brew install pnpm  # macOS
+# or
+curl -fsSL https://get.pnpm.io/install.sh | sh -  # Linux/macOS
 ```
 
-### 2. Configure Environment Variables
+### 2. Install All Dependencies
+```bash
+pnpm install
+```
+
+### 3. Configure Environment Variables
 
 **Backend** - Create `packages/backend/.env`:
 ```env
@@ -31,17 +40,17 @@ CORS_ORIGIN=http://localhost:5173
 VITE_BACKEND_URL=http://localhost:3001
 ```
 
-### 3. Run Development Servers
+### 4. Run Development Servers
 
-**All services:**
+**All services (parallel):**
 ```bash
-npm run dev
+pnpm dev
 ```
 
 **Or individually:**
 ```bash
-npm run dev:backend    # Runs on :3001
-npm run dev:frontend   # Runs on :5173
+pnpm dev:backend    # Runs on :3001
+pnpm dev:frontend   # Runs on :5173
 ```
 
 ---
@@ -63,8 +72,8 @@ npm run dev:frontend   # Runs on :5173
 
 ### Prerequisites
 
-- Node.js (v16 or later)
-- npm or yarn
+- Node.js (v18 or later)
+- pnpm (install with `npm install -g pnpm` or `brew install pnpm`)
 - start.gg API token (required)
 
 ### Installation
@@ -77,7 +86,7 @@ npm run dev:frontend   # Runs on :5173
 
 3. Install dependencies:
    ```bash
-   npm install
+   pnpm install
    ```
 
 4. Set up environment variables:
@@ -99,10 +108,12 @@ npm run dev:frontend   # Runs on :5173
 ### Running the Application
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
-The application will be available at `http://localhost:5173`
+The application will be available at:
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:3001`
 
 ## Usage
 
@@ -180,13 +191,13 @@ src/
 
 ### Building for Production
 ```bash
-npm run build
+pnpm build
 ```
 
 ### Linting and Type Checking
 ```bash
-npm run lint
-npm run typecheck
+pnpm lint
+pnpm typecheck
 ```
 
 ## Troubleshooting
