@@ -9,7 +9,7 @@ class StartGgApi {
   private requestQueue: Array<() => Promise<any>> = [];
   private isProcessingQueue = false;
   private lastRequestTime = 0;
-  private readonly RATE_LIMIT_DELAY = 1000; // 1 second between requests
+  private readonly RATE_LIMIT_DELAY = 800; // 800ms between requests (75 req/min - under 80/min limit)
   private readonly MAX_RETRIES = 3;
   private readonly RETRY_DELAY = 2000; // 2 seconds base delay
 
@@ -237,18 +237,15 @@ class StartGgApi {
 
     for (let i = 0; i < eventDetails.phaseGroups.length; i++) {
       const phaseGroup = eventDetails.phaseGroups[i];
-      
-      // Add a small delay between phase groups to be more conservative with API limits
-      if (i > 0) {
-        await this.sleep(300);
-      }
-      
+
+      // No extra delay needed - request queue already enforces rate limit
+
       let page = 1;
       let hasMorePages = true;
       const bracketMatches: any[] = [];
       const bracketPlayers = new Map<string, any>();
 
-      while (hasMorePages && page <= 5) { // Reduce to 5 pages to be more conservative with API limits
+      while (hasMorePages && page <= 10) { // Allow up to 10 pages if needed
         try {
           const setsData = await this.loadPhaseGroupSets(tournamentSlug, phaseGroup.id, page);
           
@@ -275,7 +272,7 @@ class StartGgApi {
             });
 
             // Check if we got fewer results than requested (indicates last page)
-            if (setsData.length < 8) {
+            if (setsData.length < 30) {
               hasMorePages = false;
             } else {
               page++;
@@ -330,7 +327,7 @@ class StartGgApi {
     const setsQuery = `
       query PhaseGroupSetsQuery($phaseGroupId: ID!, $page: Int!) {
         phaseGroup(id: $phaseGroupId) {
-          sets(page: $page, perPage: 8, filters: {state: [1, 2, 3]}) {
+          sets(page: $page, perPage: 30, filters: {state: [1, 2, 3]}) {
             nodes {
               id
               fullRoundText

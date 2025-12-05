@@ -108,7 +108,7 @@ POST /api/tournament/:slug/refresh
 ### 1. Install Dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
 This installs all workspace packages (frontend, backend, shared).
@@ -132,16 +132,16 @@ VITE_BACKEND_URL=http://localhost:3001
 
 **Option A - All services:**
 ```bash
-npm run dev
+pnpm dev
 ```
 
 **Option B - Individually:**
 ```bash
 # Terminal 1
-npm run dev:backend
+pnpm dev:backend
 
 # Terminal 2
-npm run dev:frontend
+pnpm dev:frontend
 ```
 
 **Access:**
@@ -279,7 +279,7 @@ Benefit: Multiple clients share cache
 ```bash
 # 1. Start backend
 cd packages/backend
-npm run dev
+pnpm dev
 
 # 2. In another terminal, test caching
 curl http://localhost:3001/api/tournament/manila-madness-4
@@ -350,7 +350,7 @@ curl -X POST http://localhost:3001/api/tournament/manila-madness-4/refresh
 - Compile-time error detection
 
 ### ✅ Monorepo Benefits
-- Single `npm install` for all packages
+- Single `pnpm install` for all packages
 - Shared types prevent mismatches
 - Easy cross-package development
 
@@ -359,7 +359,7 @@ curl -X POST http://localhost:3001/api/tournament/manila-madness-4/refresh
 ## 🐛 Troubleshooting
 
 ### "Cannot find module '@commentary/shared'"
-**Solution:** Run `npm install` from root directory
+**Solution:** Run `pnpm install` from root directory
 
 ### Backend won't start
 **Check:**
@@ -470,7 +470,7 @@ REDIS_URL=redis://localhost:6379
 - Can add Redis later for production
 
 ### Why Monorepo?
-**Choice:** NPM workspaces monorepo
+**Choice:** pnpm workspaces monorepo
 
 **Reasoning:**
 - Shared types prevent bugs
@@ -492,4 +492,4 @@ You now have a production-ready **hybrid BFF architecture** that:
 6. ✅ Is portable and deployable anywhere
 7. ✅ Has clear documentation and examples
 
-**Next:** Run `npm install` and start both servers to see it in action! 🚀
+**Next:** Run `pnpm install` and start both servers to see it in action! 🚀

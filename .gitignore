@@ -14,6 +14,11 @@ dist
 dist-ssr
 *.local
 
+# Package manager lockfiles (pnpm migration)
+# Keep pnpm-lock.yaml (committed), ignore legacy npm lockfile
+package-lock.json
+.pnpm-store/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -6,7 +6,8 @@ Backend-for-Frontend (BFF) server with smart caching for the Commentary Dashboar
 
 - ✅ **Smart Caching** with dynamic TTL based on match states
 - ✅ **Manual Cache Busting** via API endpoints
-- ✅ **Redis Support** with in-memory fallback
+- ✅ **Interface-Based Cache System** with Redis + In-Memory fallback
+- ✅ **Automatic Failover** - continues working if Redis fails
 - ✅ **Rate Limit Management** for start.gg API
 - ✅ **CORS** enabled for frontend integration
 
@@ -16,12 +17,12 @@ Backend-for-Frontend (BFF) server with smart caching for the Commentary Dashboar
 
 From the monorepo root:
 ```bash
-npm install
+pnpm install
 ```
 
 Or from this directory:
 ```bash
-npm install
+pnpm install
 ```
 
 ### 2. Environment Variables
@@ -39,13 +40,13 @@ CORS_ORIGIN=http://localhost:5173  # Your frontend URL
 
 Development mode (with auto-reload):
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Production mode:
 ```bash
-npm run build
-npm start
+pnpm build
+pnpm start
 ```
 
 ## API Endpoints
@@ -144,7 +145,7 @@ If Redis is not available, the server automatically falls back to in-memory cach
 ### Railway
 ```bash
 # Install Railway CLI
-npm i -g @railway/cli
+pnpm add -g @railway/cli
 
 # Login and deploy
 railway login
@@ -159,8 +160,8 @@ Set environment variables in Railway dashboard:
 ### Render
 1. Connect your GitHub repo
 2. Select `packages/backend` as root directory
-3. Build command: `npm install && npm run build`
-4. Start command: `npm start`
+3. Build command: `pnpm install && pnpm build`
+4. Start command: `pnpm start`
 5. Add environment variables in dashboard
 
 ### Vercel
@@ -176,12 +177,31 @@ Note: You'll need to adapt the Express server for Vercel's serverless format.
 ```
 src/
 ├── index.ts           # Express server entry point
-├── cache.ts           # Cache service (Redis + in-memory)
+├── cache/             # Cache system (interface-based)
+│   ├── ICacheService.ts          # Cache interface
+│   ├── RedisCacheService.ts      # Redis implementation
+│   ├── InMemoryCacheService.ts   # In-memory implementation
+│   ├── FallbackCacheService.ts   # Fallback orchestrator
+│   ├── factory.ts                # Factory for creating caches
+│   ├── index.ts                  # Exports
+│   ├── example.ts                # Usage examples
+│   └── README.md                 # Cache documentation
 ├── startgg.ts         # start.gg API client
 ├── routes/
 │   └── tournament.ts  # Tournament API routes
 └── utils/
     └── ttl-calculator.ts  # Dynamic TTL logic
+```
+
+### Cache System
+
+See [src/cache/README.md](./src/cache/README.md) for detailed cache architecture documentation.
+
+**Run cache examples:**
+```bash
+pnpm exec tsx src/cache/example.ts
+# or
+npx tsx src/cache/example.ts
 ```
 
 ### Testing Cache Behavior

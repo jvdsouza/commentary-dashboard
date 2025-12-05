@@ -3,24 +3,23 @@
   "version": "1.0.0",
   "private": true,
   "description": "Esports commentary dashboard with BFF backend and smart caching",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
-    "dev": "npm run dev --workspaces --if-present",
-    "dev:frontend": "npm run dev -w @commentary/frontend",
-    "dev:backend": "npm run dev -w @commentary/backend",
-    "build": "npm run build --workspaces --if-present",
-    "build:frontend": "npm run build -w @commentary/frontend",
-    "build:backend": "npm run build -w @commentary/backend",
-    "lint": "npm run lint --workspaces --if-present",
-    "install:all": "npm install"
+    "dev": "pnpm -r --parallel run dev",
+    "dev:frontend": "pnpm --filter @commentary/frontend dev",
+    "dev:backend": "pnpm --filter @commentary/backend dev",
+    "build": "pnpm -r run build",
+    "build:frontend": "pnpm --filter @commentary/frontend build",
+    "build:backend": "pnpm --filter @commentary/backend build",
+    "build:shared": "pnpm --filter @commentary/shared build",
+    "lint": "pnpm -r run lint",
+    "clean": "pnpm -r exec rm -rf node_modules dist",
+    "clean:install": "pnpm clean && pnpm install"
   },
   "devDependencies": {
     "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "pnpm": ">=8.0.0"
   }
 }

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { startGgApi } from '../startgg';
-import { cacheService } from '../cache';
+import { cacheService } from '../cache'; // Now uses the new interface-based implementation
 import { calculateDynamicTTL, getMatchStateMetadata } from '../utils/ttl-calculator';
 import type { TournamentResponse } from '@commentary/shared';
 
